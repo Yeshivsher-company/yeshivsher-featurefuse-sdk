@@ -1,13 +1,23 @@
 {
   "name": "featurefuse-sdk",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "Minimal JavaScript SDK for FeatureFuse feature flags",
   "main": "index.js",
   "exports": {
-    "import": "./index.js",
-    "require": "./index.js",
-    "./react": "./react.js"
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    },
+    "./react": {
+      "import": "./react.js",
+      "require": "./react.js"
+    }
   },
+  "files": [
+    "index.js",
+    "react.js",
+    "README.md"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
