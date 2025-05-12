@@ -1,6 +1,6 @@
 {
   "name": "featurefuse-sdk",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Minimal JavaScript SDK for FeatureFuse feature flags",
   "main": "index.js",
   "exports": {
@@ -31,6 +31,7 @@
   "author": "Yeshivsher raphael@yeshivsher.com",
   "license": "MIT",
   "dependencies": {
-    "cross-fetch": "^4.1.0"
+    "cross-fetch": "^4.1.0",
+    "eventemitter3": "^5.0.1"
   }
 }
