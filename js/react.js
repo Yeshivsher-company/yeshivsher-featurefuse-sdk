@@ -4,11 +4,10 @@ import { init as ffInit, getFlags } from "./index.js";
 const FeatureFuseContext = createContext({ flags: {} });
 
 /**
- * React provider that fetches flags once on mount.
+ * React provider that fetches flags once on mount via query param.
  */
-export function FlagsmithProvider({ children, options }) {
+export function FeatureFuseProvider({ children, options }) {
   const [flags, setFlags] = useState({});
-
   useEffect(() => {
     let mounted = true;
     ffInit(options).then((fetched) => {
@@ -18,7 +17,6 @@ export function FlagsmithProvider({ children, options }) {
       mounted = false;
     };
   }, [JSON.stringify(options)]);
-
   return (
     <FeatureFuseContext.Provider value={{ flags }}>
       {children}
@@ -27,15 +25,13 @@ export function FlagsmithProvider({ children, options }) {
 }
 
 /**
- * Hook to select specific flags or all.
+ * Hook to select specific flags or return all.
  * @param {string[]} keys
- * @returns {{ [key: string]: { enabled: boolean } }}
+ * @returns {{ [flag: string]: { enabled: boolean } }}
  */
 export function useFlags(keys = []) {
   const { flags } = useContext(FeatureFuseContext);
-  if (!Array.isArray(keys)) {
-    return { ...flags };
-  }
+  if (!Array.isArray(keys)) return { ...flags };
   const selected = {};
   keys.forEach((key) => {
     selected[key] = { enabled: Boolean(flags[key]) };

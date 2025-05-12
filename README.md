@@ -64,7 +64,7 @@ const { init, hasFeature, getFlags } = require("@featurefuse/sdk");
 
 ```jsx
 import React from "react";
-import { FlagsmithProvider, useFlags } from "@featurefuse/sdk/react";
+import { FeatureFuseProvider, useFlags } from "@featurefuse/sdk/react";
 
 function HomePage() {
   const flags = useFlags(["chat_widget"]);
@@ -73,9 +73,9 @@ function HomePage() {
 
 export default function App() {
   return (
-    <FlagsmithProvider options={{ environmentID: "YOUR_ENV_ID" }}>
+    <FeatureFuseProvider options={{ environmentID: "YOUR_ENV_ID" }}>
       <HomePage />
-    </FlagsmithProvider>
+    </FeatureFuseProvider>
   );
 }
 ```

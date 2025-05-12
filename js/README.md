@@ -1,65 +1,67 @@
-# featurefuse-sdk
+## JavaScript SDK
 
-A minimal JavaScript SDK for FeatureFuse feature flags. Fetches flags once on initialization—no polling or subscriptions.
-
-## Installation
+### Install
 
 ```bash
 npm install featurefuse-sdk
+# or yarn add featurefuse-sdk
 ```
 
-## API Usage
+### API
 
-### Vanilla JavaScript (ESM or CommonJS)
+#### `init(options)`
+
+Fetches flags once by appending `?envID=...` to the URL, so no custom headers are sent.
+
+- `options.environmentID` (string) **required**
+- `options.url` (string) override default endpoint
 
 ```js
-// ESM
 import { init, hasFeature, getFlags } from "featurefuse-sdk";
 
-// CommonJS
-// const { init, hasFeature, getFlags } = require('featurefuse-sdk');
-
-// Initialize and fetch flags
-const flags = await init({ environmentID: "YOUR_ENV_ID" });
-
-// Check a feature
-if (hasFeature("dark_mode")) {
-  enableDarkMode();
-}
-
-// Or inspect all flags
-console.log(getFlags());
+// Default SaaS endpoint:
+const flags = await init({ environmentID: "ENV_ID" });
 ```
+
+#### `hasFeature(name)`
+
+Check if a specific feature is enabled.
+
+#### `getFlags()`
+
+Retrieve last-fetched flags object.
 
 ### React Integration
 
 ```jsx
-import React from "react";
-import { FlagsmithProvider, useFlags } from "featurefuse-sdk/react";
+import { FeatureFuseProvider, useFlags } from "featurefuse-sdk/react";
 
-function HomePage() {
-  const flags = useFlags(["chat_widget", "design_v2"]);
+function App() {
   return (
-    <>
-      {flags.chat_widget.enabled && <ChatWidget />}
-      {flags.design_v2.enabled ? <NewDesign /> : <OldDesign />}
-    </>
+    <FeatureFuseProvider options={{ environmentID: "ENV_ID" }}>
+      <HomePage />
+    </FeatureFuseProvider>
   );
 }
 
-export default function App() {
-  return (
-    <FlagsmithProvider options={{ environmentID: "YOUR_ENV_ID" }}>
-      <HomePage />
-    </FlagsmithProvider>
-  );
+function HomePage() {
+  const flags = useFlags(["chat_widget"]);
+  return <>{flags.chat_widget.enabled && <ChatWidget />}</>;
 }
 ```
 
-## Module Formats
+## Other SDKs
 
-- **ESM**: `import { init } from 'featurefuse-sdk';`
-- **CommonJS**: `const { init } = require('featurefuse-sdk');`
+- **Python**: `pip install featurefuse-sdk`
+- **C#**: `Install-Package FeatureFuse.SDK`
+
+## Publishing
+
+```bash
+npm publish --access public
+# or
+yarn publish --access public
+```
 
 ## License
 

@@ -5,16 +5,19 @@ const DEFAULT_URL =
 let _flags = {};
 
 /**
- * Initialize SDK by fetching flags once.
+ * Initialize SDK by fetching flags once via query param (no custom headers).
  * @param {{ environmentID: string, url?: string }} options
  * @returns {Promise<object>} Resolves with fetched flags object.
  */
 export async function init({ environmentID, url = DEFAULT_URL } = {}) {
-  if (!environmentID) {
-    throw new Error("environmentID is required");
-  }
+  if (!environmentID) throw new Error("environmentID is required");
+  // Use query param for envID, avoiding custom headers and CORS preflight
+  const connector = url.includes("?") ? "&" : "?";
+  const fetchUrl = `${url}/api/flags${connector}envID=${encodeURIComponent(
+    environmentID
+  )}`;
   try {
-    const res = await fetch(url, { headers: { "X-Env-ID": environmentID } });
+    const res = await fetch(fetchUrl);
     if (!res.ok) {
       console.error("FeatureFuse fetch failed:", res.statusText);
       return {};
@@ -48,7 +51,7 @@ export function getFlags() {
   return { ..._flags };
 }
 
-// Support CommonJS
+// CommonJS support
 if (typeof module !== "undefined") {
   module.exports = { init, hasFeature, getFlags };
 }
