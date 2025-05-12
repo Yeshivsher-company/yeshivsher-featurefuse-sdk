@@ -1,5 +1,5 @@
 {
-  "name": "@featurefuse/sdk",
+  "name": "featurefuse-sdk",
   "version": "1.0.0",
   "description": "Minimal JavaScript SDK for FeatureFuse feature flags",
   "main": "index.js",
