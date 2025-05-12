@@ -1,0 +1,26 @@
+{
+  "name": "@featurefuse/sdk",
+  "version": "1.0.0",
+  "description": "Minimal JavaScript SDK for FeatureFuse feature flags",
+  "main": "index.js",
+  "exports": {
+    "import": "./index.js",
+    "require": "./index.js",
+    "./react": "./react.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "feature-flags",
+    "featurefuse",
+    "sdk",
+    "feature-fuse",
+    "feature-flag"
+  ],
+  "author": "Yeshivsher raphael@yeshivsher.com",
+  "license": "MIT",
+  "dependencies": {
+    "cross-fetch": "^4.1.0"
+  }
+}
