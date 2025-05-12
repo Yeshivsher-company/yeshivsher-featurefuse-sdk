@@ -1,40 +1,77 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { init as ffInit, getFlags } from "./index.js";
+import { init as ffInit, fetchFlags, onFlagsUpdated } from "./index.js";
 
-const FeatureFuseContext = createContext({ flags: {} });
+// Context to hold current flags map
+const FeatureFuseContext = createContext({});
 
 /**
- * React provider that fetches flags once on mount via query param.
+ * Provider that initializes the SDK and keeps flags up to date.
+ * @param {{ environmentID: string, url?: string, pollInterval?: number }} options
  */
 export function FeatureFuseProvider({ children, options }) {
+  const { environmentID, url, pollInterval = 0 } = options;
   const [flags, setFlags] = useState({});
+
   useEffect(() => {
+    if (!environmentID) {
+      console.error("FeatureFuseProvider requires environmentID");
+      return;
+    }
     let mounted = true;
-    ffInit(options).then((fetched) => {
-      if (mounted) setFlags(fetched);
+
+    // Initialize SDK and fetch flags once
+    ffInit({ environmentID, url });
+
+    async function loadFlags() {
+      try {
+        const fetched = await fetchFlags(environmentID, url);
+        if (mounted) setFlags(fetched);
+      } catch (err) {
+        console.error("FeatureFuse fetch error:", err);
+      }
+    }
+    loadFlags();
+
+    // Subscribe to updates via emitter
+    const unsubscribe = onFlagsUpdated((newFlags) => {
+      if (mounted) setFlags(newFlags);
     });
+
+    // Optional polling
+    let timerId;
+    if (pollInterval > 0) {
+      timerId = setInterval(loadFlags, pollInterval);
+    }
+
     return () => {
       mounted = false;
+      unsubscribe();
+      if (timerId) clearInterval(timerId);
     };
-  }, [JSON.stringify(options)]);
+  }, [environmentID, url, pollInterval]);
+
   return (
-    <FeatureFuseContext.Provider value={{ flags }}>
+    <FeatureFuseContext.Provider value={flags}>
       {children}
     </FeatureFuseContext.Provider>
   );
 }
 
 /**
- * Hook to select specific flags or return all.
+ * Hook to select specific flags or get all.
  * @param {string[]} keys
  * @returns {{ [flag: string]: { enabled: boolean } }}
  */
 export function useFlags(keys = []) {
-  const { flags } = useContext(FeatureFuseContext);
-  if (!Array.isArray(keys)) return { ...flags };
-  const selected = {};
-  keys.forEach((key) => {
-    selected[key] = { enabled: Boolean(flags[key]) };
-  });
-  return selected;
+  const flags = useContext(FeatureFuseContext);
+  if (!Array.isArray(keys) || keys.length === 0) {
+    // Return all flags
+    return Object.fromEntries(
+      Object.entries(flags).map(([k, v]) => [k, { enabled: Boolean(v) }])
+    );
+  }
+  // Return only selected flags
+  return Object.fromEntries(
+    keys.map((key) => [key, { enabled: Boolean(flags[key]) }])
+  );
 }
