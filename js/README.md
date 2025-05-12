@@ -1,11 +1,11 @@
-# @featurefuse/sdk
+# featurefuse-sdk
 
 A minimal JavaScript SDK for FeatureFuse feature flags. Fetches flags once on initialization—no polling or subscriptions.
 
 ## Installation
 
 ```bash
-npm install @featurefuse/sdk
+npm install featurefuse-sdk
 ```
 
 ## API Usage
@@ -14,10 +14,10 @@ npm install @featurefuse/sdk
 
 ```js
 // ESM
-import { init, hasFeature, getFlags } from "@featurefuse/sdk";
+import { init, hasFeature, getFlags } from "featurefuse-sdk";
 
 // CommonJS
-// const { init, hasFeature, getFlags } = require('@featurefuse/sdk');
+// const { init, hasFeature, getFlags } = require('featurefuse-sdk');
 
 // Initialize and fetch flags
 const flags = await init({ environmentID: "YOUR_ENV_ID" });
@@ -35,7 +35,7 @@ console.log(getFlags());
 
 ```jsx
 import React from "react";
-import { FlagsmithProvider, useFlags } from "@featurefuse/sdk/react";
+import { FlagsmithProvider, useFlags } from "featurefuse-sdk/react";
 
 function HomePage() {
   const flags = useFlags(["chat_widget", "design_v2"]);
@@ -58,8 +58,8 @@ export default function App() {
 
 ## Module Formats
 
-- **ESM**: `import { init } from '@featurefuse/sdk';`
-- **CommonJS**: `const { init } = require('@featurefuse/sdk');`
+- **ESM**: `import { init } from 'featurefuse-sdk';`
+- **CommonJS**: `const { init } = require('featurefuse-sdk');`
 
 ## License
 
