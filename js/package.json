@@ -1,6 +1,6 @@
 {
   "name": "featurefuse-sdk",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Minimal JavaScript SDK for FeatureFuse feature flags",
   "main": "index.js",
   "exports": {
