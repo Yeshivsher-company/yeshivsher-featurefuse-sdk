@@ -2,6 +2,8 @@
 
 A multi-language SDK for FeatureFuse feature flags. Fetch flags using your environment ID in JavaScript, React, Python, and C#.
 
+Please first sign up for an account to access the SDK at [FeatureFuse](https://featurefuse.yeshivsher.com).
+
 ## Directory Structure
 
 ```
