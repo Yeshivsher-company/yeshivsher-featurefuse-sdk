@@ -14,7 +14,8 @@ export function onFlagsUpdated(cb) {
   return () => emitter.off("update", cb);
 }
 
-const DEFAULT_URL = "http//localhost:1337/api/flags";
+const DEFAULT_URL =
+  "https://yeshivsher-featurefuse-backend-681868222932.europe-west3.run.app/api/flags";
 let _flags = {};
 
 /**
