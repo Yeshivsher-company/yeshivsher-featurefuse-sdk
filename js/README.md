@@ -34,11 +34,20 @@ Retrieve last-fetched flags object.
 ### React Integration
 
 ```jsx
-import { FeatureFuseProvider, useFlags } from "featurefuse-sdk/react";
+import {
+  FeatureFuseProvider,
+  useFlags,
+  useForceRefresh
+} from "featurefuse-sdk/react";
 
 function App() {
   return (
-    <FeatureFuseProvider options={{ environmentID: "ENV_ID" }}>
+    <FeatureFuseProvider
+      options={{
+        environmentID: "ENV_ID",
+        pollInterval: 10000 // Optional: poll every 10 seconds
+      }}
+    >
       <HomePage />
     </FeatureFuseProvider>
   );
@@ -46,9 +55,29 @@ function App() {
 
 function HomePage() {
   const flags = useFlags(["chat_widget"]);
-  return <>{flags.chat_widget.enabled && <ChatWidget />}</>;
+  const forceRefresh = useForceRefresh();
+
+  return (
+    <>
+      {flags.chat_widget.enabled && <ChatWidget />}
+      <button onClick={forceRefresh}>Refresh Flags</button>
+    </>
+  );
 }
 ```
+
+#### Provider Options
+
+- `environmentID` (string) **required** - Your FeatureFuse environment ID
+- `url` (string) - Override the default API endpoint
+- `pollInterval` (number) - How often to poll for flag updates (default: 30000ms)
+
+#### Hooks
+
+- `useFlags(keys?)` - Get feature flags. Pass an array of flag names or leave empty for all flags
+- `useForceRefresh()` - Get a function to manually refresh flags and trigger re-renders
+
+**Note**: The SDK now automatically triggers component re-renders when feature flags change, ensuring your UI stays in sync with flag updates.
 
 ## Other SDKs
 

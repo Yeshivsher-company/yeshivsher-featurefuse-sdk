@@ -66,21 +66,44 @@ const { init, hasFeature, getFlags } = require("@featurefuse/sdk");
 
 ```jsx
 import React from "react";
-import { FeatureFuseProvider, useFlags } from "@featurefuse/sdk/react";
+import {
+  FeatureFuseProvider,
+  useFlags,
+  useForceRefresh
+} from "@featurefuse/sdk/react";
 
 function HomePage() {
   const flags = useFlags(["chat_widget"]);
-  return <>{flags.chat_widget.enabled && <ChatWidget />}</>;
+  const forceRefresh = useForceRefresh();
+
+  return (
+    <>
+      {flags.chat_widget.enabled && <ChatWidget />}
+      <button onClick={forceRefresh}>Refresh Flags</button>
+    </>
+  );
 }
 
 export default function App() {
   return (
-    <FeatureFuseProvider options={{ environmentID: "YOUR_ENV_ID" }}>
+    <FeatureFuseProvider
+      options={{
+        environmentID: "YOUR_ENV_ID",
+        pollInterval: 10000 // Optional: poll every 10 seconds
+      }}
+    >
       <HomePage />
     </FeatureFuseProvider>
   );
 }
 ```
+
+**Key Features:**
+
+- **Automatic Re-rendering**: Components automatically re-render when feature flags change
+- **Real-time Updates**: Polling keeps flags up to date (configurable interval)
+- **Manual Refresh**: Use `useForceRefresh()` hook for immediate flag updates
+- **Type Safety**: Full TypeScript support
 
 ### Python SDK
 

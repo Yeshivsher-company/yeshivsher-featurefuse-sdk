@@ -76,10 +76,22 @@ export function getFlags() {
   return { ..._flags };
 }
 
+// Import React components
+import { FeatureFuseProvider, useFlags, useForceRefresh } from "./react.jsx";
+
+// Export React components
+export { FeatureFuseProvider, useFlags, useForceRefresh };
+
 // CommonJS fallback
 if (typeof module !== "undefined") {
-  module.exports = { init, fetchFlags, hasFeature, getFlags, onFlagsUpdated };
-}
-if (typeof module !== "undefined") {
-  module.exports = { init, hasFeature, getFlags, onFlagsUpdated };
+  module.exports = {
+    init,
+    fetchFlags,
+    hasFeature,
+    getFlags,
+    onFlagsUpdated,
+    FeatureFuseProvider,
+    useFlags,
+    useForceRefresh
+  };
 }

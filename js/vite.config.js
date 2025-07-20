@@ -5,10 +5,8 @@ export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: {
-        index: "./index.js",
-        react: "./react.jsx"
-      },
+      entry: "./index.js",
+      name: "FeatureFuseSDK",
       formats: ["es", "cjs"]
     },
     rollupOptions: {

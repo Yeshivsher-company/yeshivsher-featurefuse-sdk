@@ -1,17 +1,17 @@
 {
   "name": "featurefuse-sdk",
-  "version": "2.2.3",
+  "version": "2.3.3",
   "description": "Minimal JavaScript SDK for FeatureFuse feature flags",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/featurefuse-sdk.js",
+  "module": "dist/featurefuse-sdk.mjs",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/featurefuse-sdk.mjs",
+      "require": "./dist/featurefuse-sdk.js"
     },
     "./react": {
-      "import": "./dist/react.mjs",
-      "require": "./dist/react.js"
+      "import": "./dist/featurefuse-sdk.mjs",
+      "require": "./dist/featurefuse-sdk.js"
     }
   },
   "files": [
@@ -20,7 +20,9 @@
   ],
   "scripts": {
     "build": "vite build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "feature-flags",
