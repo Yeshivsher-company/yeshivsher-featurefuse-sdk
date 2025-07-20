@@ -45,7 +45,10 @@ export async function fetchFlags(environmentID, url = DEFAULT_URL) {
   )}&_=${Date.now()}`;
 
   try {
-    const res = await fetch(fetchUrl, { cache: "no-store", mode: "cors" });
+    const res = await fetch(fetchUrl, {
+      cache: "no-store",
+      mode: "cors"
+    });
     if (!res.ok) {
       console.error("FeatureFuse fetch failed:", res.statusText);
       return {};
