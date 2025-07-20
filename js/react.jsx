@@ -9,7 +9,7 @@ const FeatureFuseContext = createContext({});
  * @param {{ environmentID: string, url?: string, pollInterval?: number }} options
  */
 export function FeatureFuseProvider({ children, options }) {
-  const { environmentID, url, pollInterval = 0 } = options;
+  const { environmentID, url, pollInterval = 30000 } = options;
   const [flags, setFlags] = useState({});
 
   useEffect(() => {

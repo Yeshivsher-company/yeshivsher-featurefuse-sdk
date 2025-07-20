@@ -14,8 +14,7 @@ export function onFlagsUpdated(cb) {
   return () => emitter.off("update", cb);
 }
 
-const DEFAULT_URL =
-  "https://yeshivsher-featurefuse-backend-681868222932.europe-west3.run.app/api/flags";
+const DEFAULT_URL = "https://api.featurefuse.yeshivsher.com/api/flags";
 let _flags = {};
 
 /**
@@ -24,7 +23,13 @@ let _flags = {};
  * @returns {Promise<object>} Resolves with fetched flags object.
  */
 export async function init({ environmentID, url = DEFAULT_URL } = {}) {
-  return fetchFlags(environmentID, url);
+  try {
+    return await fetchFlags(environmentID, url);
+  } catch (error) {
+    console.error("FeatureFuse init error:", error);
+    // Return empty flags object on any errors to prevent app crashes
+    return {};
+  }
 }
 
 /**
@@ -38,16 +43,23 @@ export async function fetchFlags(environmentID, url = DEFAULT_URL) {
   const fetchUrl = `${url}${sep}envID=${encodeURIComponent(
     environmentID
   )}&_=${Date.now()}`;
-  const res = await fetch(fetchUrl, { cache: "no-store", mode: "cors" });
-  if (!res.ok) {
-    console.error("FeatureFuse fetch failed:", res.statusText);
+
+  try {
+    const res = await fetch(fetchUrl, { cache: "no-store", mode: "cors" });
+    if (!res.ok) {
+      console.error("FeatureFuse fetch failed:", res.statusText);
+      return {};
+    }
+    const data = await res.json();
+    _flags = Object.fromEntries(data.map((f) => [f.name, f.enabled]));
+    // notify subscribers of updated flags
+    emitter.emit("update", { ..._flags });
+    return { ..._flags };
+  } catch (error) {
+    console.error("FeatureFuse fetch error:", error);
+    // Return empty flags object on network errors to prevent app crashes
     return {};
   }
-  const data = await res.json();
-  _flags = Object.fromEntries(data.map((f) => [f.name, f.enabled]));
-  // notify subscribers of updated flags
-  emitter.emit("update", { ..._flags });
-  return { ..._flags };
 }
 
 /**
@@ -66,8 +78,8 @@ export function getFlags() {
 
 // CommonJS fallback
 if (typeof module !== "undefined") {
-  module.exports = { init, fetchFlags, hasFeature, getFlags };
+  module.exports = { init, fetchFlags, hasFeature, getFlags, onFlagsUpdated };
 }
 if (typeof module !== "undefined") {
-  module.exports = { init, hasFeature, getFlags, stopPolling };
+  module.exports = { init, hasFeature, getFlags, onFlagsUpdated };
 }
