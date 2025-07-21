@@ -19,12 +19,16 @@ let _flags = {};
 
 /**
  * Fetch flags once via query param (no custom headers), with cache-busting.
- * @param {{ environmentID: string, url?: string }} options
+ * @param {{ environmentID: string, url?: string, flagNames?: string[]|string }} options
  * @returns {Promise<object>} Resolves with fetched flags object.
  */
-export async function init({ environmentID, url = DEFAULT_URL } = {}) {
+export async function init({
+  environmentID,
+  url = DEFAULT_URL,
+  flagNames
+} = {}) {
   try {
-    return await fetchFlags(environmentID, url);
+    return await fetchFlags(environmentID, url, flagNames);
   } catch (error) {
     console.error("FeatureFuse init error:", error);
     // Return empty flags object on any errors to prevent app crashes
@@ -36,13 +40,25 @@ export async function init({ environmentID, url = DEFAULT_URL } = {}) {
  * Low-level fetch to retrieve and store flags.
  * @param {string} environmentID
  * @param {string} url
+ * @param {string[]|string} [flagNames] - Optional flag name(s) to fetch
  */
-export async function fetchFlags(environmentID, url = DEFAULT_URL) {
+export async function fetchFlags(environmentID, url = DEFAULT_URL, flagNames) {
   if (!environmentID) throw new Error("environmentID is required");
   const sep = url.includes("?") ? "&" : "?";
-  const fetchUrl = `${url}${sep}envID=${encodeURIComponent(
+  let fetchUrl = `${url}${sep}envID=${encodeURIComponent(
     environmentID
   )}&_=${Date.now()}`;
+
+  // Add flag query parameter if flagNames provided
+  if (
+    flagNames &&
+    (Array.isArray(flagNames) ? flagNames.length > 0 : !!flagNames)
+  ) {
+    const flagParam = Array.isArray(flagNames)
+      ? flagNames.join(",")
+      : flagNames;
+    fetchUrl += `&flag=${encodeURIComponent(flagParam)}`;
+  }
 
   try {
     const res = await fetch(fetchUrl, {
@@ -79,6 +95,21 @@ export function getFlags() {
   return { ..._flags };
 }
 
+/**
+ * Fetch only specific flags by name using the flag query parameter.
+ * @param {string} environmentID
+ * @param {string[]|string} flagNames - Flag name(s) to fetch
+ * @param {string} [url] - Optional override for the API endpoint
+ * @returns {Promise<object>} Resolves with fetched flags object.
+ */
+export async function fetchSpecificFlags(
+  environmentID,
+  flagNames,
+  url = DEFAULT_URL
+) {
+  return fetchFlags(environmentID, url, flagNames);
+}
+
 // Import React components
 import { FeatureFuseProvider, useFlags, useForceRefresh } from "./react.jsx";
 
@@ -90,6 +121,7 @@ if (typeof module !== "undefined") {
   module.exports = {
     init,
     fetchFlags,
+    fetchSpecificFlags,
     hasFeature,
     getFlags,
     onFlagsUpdated,

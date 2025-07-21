@@ -9,18 +9,42 @@ npm install featurefuse-sdk
 
 ### API
 
+#### `fetchSpecificFlags(environmentID, flagNames, url?)`
+
+Fetch only specific flags by name using the `flag` query parameter.
+
+```js
+import { fetchSpecificFlags } from "featurefuse-sdk";
+
+// Fetch a single flag
+const chatFlag = await fetchSpecificFlags("ENV_ID", "chat_widget");
+
+// Fetch multiple flags
+const selectedFlags = await fetchSpecificFlags("ENV_ID", [
+  "chat_widget",
+  "beta_feature"
+]);
+```
+
 #### `init(options)`
 
 Fetches flags once by appending `?envID=...` to the URL, so no custom headers are sent.
 
 - `options.environmentID` (string) **required**
 - `options.url` (string) override default endpoint
+- `options.flagNames` (string[]|string) fetch only specific flag(s) (uses the `flag` query parameter)
 
 ```js
 import { init, hasFeature, getFlags } from "featurefuse-sdk";
 
 // Default SaaS endpoint:
 const flags = await init({ environmentID: "ENV_ID" });
+
+// Fetch only specific flags:
+const selectedFlags = await init({
+  environmentID: "ENV_ID",
+  flagNames: ["chat_widget", "beta_feature"]
+});
 ```
 
 #### `hasFeature(name)`
